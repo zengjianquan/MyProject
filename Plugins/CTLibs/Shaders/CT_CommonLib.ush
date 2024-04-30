@@ -1,0 +1,7 @@
+//参考 https://forums.unrealengine.com/t/cant-define-function-in-hlsl-on-custom-shader-node/1232152
+struct CT_CommonLib {
+    float4 SimpleAddFunc(float4 input_a, float4 input_b) {
+        return input_a + input_b;
+    }
+} CT_Common;
+

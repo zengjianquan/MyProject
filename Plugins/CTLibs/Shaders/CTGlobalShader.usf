@@ -1,0 +1,21 @@
+// ----------CTGlobalShader.usf-------------
+#include "/Engine/Public/Platform.ush"  //need to include this otherwise compilation error: cant found common.ush
+#include "/Engine/Private/Common.ush"
+#include "/Engine/Private/ScreenPass.ush"
+
+// Shader Parameters
+Texture2D InputTexture;
+SamplerState InputSampler;
+float4 InputColor;
+FScreenTransform SvPositionToInputTextureUV;
+
+// Fragment Shader
+void MainPS(
+    float4 SvPosition : SV_POSITION,
+    out float4 OutColor : SV_Target0) 
+{
+    //屏幕空间 -> uv 空间
+    float2 UV = ApplyScreenTransform(SvPosition.xy, SvPositionToInputTextureUV); //*1
+    OutColor = Texture2DSample(InputTexture, InputSampler, UV)* InputColor;
+    
+}
