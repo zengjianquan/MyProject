@@ -16,7 +16,7 @@ class MYPROJECT_API AMyPlayerState : public APlayerState, public IAbilitySystemI
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UAbilitySystemComponent> AbilitySystemComponent;
 
 	UPROPERTY()

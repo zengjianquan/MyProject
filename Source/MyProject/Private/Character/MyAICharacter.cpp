@@ -17,7 +17,7 @@ AMyAICharacter::AMyAICharacter()
 void AMyAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	InitAbilityActorInfo();
 }
 
 void AMyAICharacter::Tick(float DeltaTime)
@@ -25,4 +25,10 @@ void AMyAICharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 
+}
+
+void AMyAICharacter::InitAbilityActorInfo()
+{
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	Cast<UMyAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 }

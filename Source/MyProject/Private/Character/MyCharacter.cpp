@@ -40,3 +40,7 @@ UAttributeSet* AMyCharacter::GetAttributeSet() const
 {
 	return AttributeSet;
 }
+
+void AMyCharacter::InitAbilityActorInfo()
+{
+}

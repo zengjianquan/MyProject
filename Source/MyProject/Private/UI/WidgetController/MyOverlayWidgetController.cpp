@@ -3,6 +3,7 @@
 
 #include "UI/WidgetController/MyOverlayWidgetController.h"
 #include "AbilitySystem/MyAttributeSet.h"
+#include "AbilitySystem/MyAbilitySystemComponent.h"
 
 void UMyOverlayWidgetController::BroadcastInitalValues()
 {
@@ -21,37 +22,50 @@ void UMyOverlayWidgetController::BindCallbacksToDependecies()
 	//通过 AttributeSet 获取 Attribute, 然后通过 ASC 添加该 Attribute 更改时的委托
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 		MyAttributeSet->GetHealthAttribute()
-	).AddUObject(this, &UMyOverlayWidgetController::HealthChanged);
+	).AddLambda([this](const FOnAttributeChangeData& Data)
+		{
+			OnHealthChanged.Broadcast(Data.NewValue);
+		}
+	);
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 		MyAttributeSet->GetMaxHealthAttribute()
-	).AddUObject(this, &UMyOverlayWidgetController::MaxHealthChanged);
+	).AddLambda([this](const FOnAttributeChangeData& Data)
+		{
+			OnMaxHealthChanged.Broadcast(Data.NewValue);
+		}
+	);
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 		MyAttributeSet->GetManaAttribute()
-	).AddUObject(this, &UMyOverlayWidgetController::ManaChanged);
+	).AddLambda([this](const FOnAttributeChangeData& Data)
+		{
+			OnManaChanged.Broadcast(Data.NewValue);
+		}
+	);
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 		MyAttributeSet->GetMaxManaAttribute()
-	).AddUObject(this, &UMyOverlayWidgetController::MaxManaChanged);
-}
+	).AddLambda([this](const FOnAttributeChangeData& Data)
+		{
+			OnMaxManaChanged.Broadcast(Data.NewValue);
+		}
+	);
 
-void UMyOverlayWidgetController::HealthChanged(const FOnAttributeChangeData& Data) const
-{
-	OnHealthChanged.Broadcast(Data.NewValue);
-}
+	Cast<UMyAbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda(
+		[this](const FGameplayTagContainer& AssetTags) 
+		{
+			for (const auto& Tag : AssetTags) {
+				FGameplayTag TagRequest = FGameplayTag::RequestGameplayTag(FName("Message"));
+				if (Tag.MatchesTag(TagRequest)) 
+				{
+					FUIWidgetRow* Row = 
+						MessageDataTable->FindRow<FUIWidgetRow>(Tag.GetTagName(), TEXT(""));
 
-void UMyOverlayWidgetController::MaxHealthChanged(const FOnAttributeChangeData& Data) const
-{
-	OnMaxHealthChanged.Broadcast(Data.NewValue);
-}
+					MessageWidgetRowDelegate.Broadcast(*Row);
+				}
 
-void UMyOverlayWidgetController::ManaChanged(const FOnAttributeChangeData& Data) const
-{
-	OnManaChanged.Broadcast(Data.NewValue);
-}
-
-void UMyOverlayWidgetController::MaxManaChanged(const FOnAttributeChangeData& Data) const
-{
-	OnMaxManaChanged.Broadcast(Data.NewValue);
+			}
+		}
+	);
 }

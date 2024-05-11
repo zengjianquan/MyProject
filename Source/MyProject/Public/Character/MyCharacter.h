@@ -37,4 +37,8 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	virtual UAttributeSet* GetAttributeSet() const;
+
+private:
+	virtual void InitAbilityActorInfo();
+
 };
