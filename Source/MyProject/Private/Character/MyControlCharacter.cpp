@@ -64,4 +64,5 @@ void AMyControlCharacter::InitAbilityActorInfo()
 		}
 	}
 	
+	InitializePrimaryAttributes();
 }

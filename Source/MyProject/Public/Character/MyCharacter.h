@@ -18,6 +18,9 @@ protected:
 	UPROPERTY()
 	TObjectPtr<class UAttributeSet> AttributeSet;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	TSubclassOf<class UGameplayEffect> DefaultPrimaryAttributes;
+
 public:
 	// Sets default values for this character's properties
 	AMyCharacter();
@@ -38,7 +41,8 @@ public:
 
 	virtual UAttributeSet* GetAttributeSet() const;
 
-private:
+protected:
 	virtual void InitAbilityActorInfo();
 
+	void InitializePrimaryAttributes() const;
 };
