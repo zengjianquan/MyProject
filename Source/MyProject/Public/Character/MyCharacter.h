@@ -5,10 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+
+#include "Interaction/MyCombatInterface.h"
+
 #include "MyCharacter.generated.h"
 
 UCLASS(Abstract)
-class MYPROJECT_API AMyCharacter : public ACharacter, public IAbilitySystemInterface
+class MYPROJECT_API AMyCharacter : public ACharacter, public IAbilitySystemInterface, public IMyCombatInterface
 {
 	GENERATED_BODY()
 protected:
@@ -20,6 +23,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TSubclassOf<class UGameplayEffect> DefaultPrimaryAttributes;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	TSubclassOf<class UGameplayEffect> DefaultSecondaryAttributes;
 
 public:
 	// Sets default values for this character's properties
@@ -41,8 +47,14 @@ public:
 
 	virtual UAttributeSet* GetAttributeSet() const;
 
+	// begin IMyCombatInterface
+	virtual int32 GetPlayerLevel() override;
+	// end IMyCombatInterface
+
 protected:
 	virtual void InitAbilityActorInfo();
 
-	void InitializePrimaryAttributes() const;
+	void ApplyEffectToSelf(TSubclassOf<class UGameplayEffect> GameplayEffectClass, float Level) const;
+
+	void InitializeDefaultAttributes() const;
 };

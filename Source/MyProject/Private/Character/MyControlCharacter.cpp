@@ -45,6 +45,14 @@ void AMyControlCharacter::OnRep_PlayerState()
 	InitAbilityActorInfo();
 }
 
+int32 AMyControlCharacter::GetPlayerLevel()
+{
+	AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>();
+	check(MyPlayerState);
+
+	return MyPlayerState->GetPlayerLevel();
+}
+
 void AMyControlCharacter::InitAbilityActorInfo()
 {
 	//初始化 actor ability info
@@ -64,5 +72,5 @@ void AMyControlCharacter::InitAbilityActorInfo()
 		}
 	}
 	
-	InitializePrimaryAttributes();
+	InitializeDefaultAttributes();
 }

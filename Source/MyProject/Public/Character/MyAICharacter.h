@@ -13,6 +13,10 @@ UCLASS()
 class MYPROJECT_API AMyAICharacter : public AMyCharacter
 {
 	GENERATED_BODY()
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
+	int32 Level = 1;
+
 public:
 	AMyAICharacter();
 
@@ -23,6 +27,11 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+
+	//~ Begin IMyCombatInterface
+	virtual int32 GetPlayerLevel() override;
+	//~ End IMyCombatInterface
 
 private:
 	virtual void InitAbilityActorInfo() override;

@@ -27,6 +27,11 @@ void AMyAICharacter::Tick(float DeltaTime)
 
 }
 
+int32 AMyAICharacter::GetPlayerLevel()
+{
+	return Level;
+}
+
 void AMyAICharacter::InitAbilityActorInfo()
 {
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);

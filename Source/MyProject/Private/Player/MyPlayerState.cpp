@@ -2,6 +2,7 @@
 
 
 #include "Player/MyPlayerState.h"
+#include "Net/UnrealNetwork.h"
 
 #include "AbilitySystem/MyAbilitySystemComponent.h"
 #include "AbilitySystem/MyAttributeSet.h"
@@ -27,6 +28,18 @@ AMyPlayerState::AMyPlayerState()
 	AttributeSet = CreateDefaultSubobject<UMyAttributeSet>(TEXT("AttributeSet"));
 }
 
+void AMyPlayerState::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AMyPlayerState, Level);
+}
+
+int32 AMyPlayerState::GetPlayerLevel() const
+{
+	return Level;
+}
+
 UAbilitySystemComponent* AMyPlayerState::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
@@ -35,5 +48,9 @@ UAbilitySystemComponent* AMyPlayerState::GetAbilitySystemComponent() const
 UAttributeSet* AMyPlayerState::GetAttributeSet() const
 {
 	return AttributeSet;
+}
+
+void AMyPlayerState::OnRep_Level(int32 OldLevel) const
+{
 }
 
