@@ -25,6 +25,10 @@ public:
 	virtual void BindCallbacksToDependecies();
 	//~ End UMyWidgetController
 
+protected:
+	void BroadcastAttributeInfoDelegate(const FGameplayTag& Tag, const FGameplayAttribute& Attrbute) const;
+
+public:
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FAttributeInfoSignature AttributeInfoDelegate;
 

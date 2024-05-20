@@ -13,9 +13,7 @@ void UMyAttributeMenuWidgetController::BroadcastInitalValues()
 
 	for (const auto& pair : AS->TagToAttributes) 
 	{
-		FMyAttributeInfo Info = AttributeInfo->FindAttributeInfoForTag(pair.Key);
-		Info.AttributeValue = pair.Value.GetNumericValue(AS);
-		AttributeInfoDelegate.Broadcast(Info);
+		BroadcastAttributeInfoDelegate(pair.Key, pair.Value);
 	}
 }
 
@@ -26,13 +24,19 @@ void UMyAttributeMenuWidgetController::BindCallbacksToDependecies()
 	for (const auto& pair : AS->TagToAttributes) 
 	{
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(pair.Value).AddLambda(
-			[this, pair, AS](const FOnAttributeChangeData& Data)
+			[this, pair](const FOnAttributeChangeData& Data)
 			{
-				FMyAttributeInfo Info = AttributeInfo->FindAttributeInfoForTag(pair.Key);
-				Info.AttributeValue = pair.Value.GetNumericValue(AS);
-				AttributeInfoDelegate.Broadcast(Info);
+				BroadcastAttributeInfoDelegate(pair.Key, pair.Value);
 			}
 		);
 	}
 
+}
+
+void UMyAttributeMenuWidgetController::BroadcastAttributeInfoDelegate(const FGameplayTag& Tag, 
+	const FGameplayAttribute& Attrbute) const
+{
+	FMyAttributeInfo Info = AttributeInfo->FindAttributeInfoForTag(Tag);
+	Info.AttributeValue = Attrbute.GetNumericValue(AttributeSet);
+	AttributeInfoDelegate.Broadcast(Info);
 }
