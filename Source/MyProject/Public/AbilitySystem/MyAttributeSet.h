@@ -58,6 +58,8 @@ class MYPROJECT_API UMyAttributeSet : public UAttributeSet
 	GENERATED_BODY()
 
 public:
+	TMap<FGameplayTag, FGameplayAttribute> TagToAttributes;
+
 	/*
 	* Primary Attribute
 	*/

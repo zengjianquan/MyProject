@@ -5,6 +5,7 @@
 
 #include "UI/Widget/MyUserWidget.h"
 #include "UI/WidgetController/MyOverlayWidgetController.h"
+#include "UI/WidgetController/MyAttributeMenuWidgetController.h"
 
 TObjectPtr<class UMyOverlayWidgetController> AMyHUD::GetOverlayWidgetController(const FWdigetControllerParams& Params)
 {
@@ -14,6 +15,17 @@ TObjectPtr<class UMyOverlayWidgetController> AMyHUD::GetOverlayWidgetController(
 		OverlayWidgetController->BindCallbacksToDependecies();
 	}
 	return OverlayWidgetController;
+}
+
+TObjectPtr<UMyAttributeMenuWidgetController> AMyHUD::GetAttributeMenuWidgetController(const FWdigetControllerParams& Params)
+{
+	if (AttributeMenuWidgetController == nullptr)
+	{
+		AttributeMenuWidgetController = NewObject<UMyAttributeMenuWidgetController>(this, AttributeMenuWidgetControllerClass);
+		AttributeMenuWidgetController->SetWidgetControllerParams(Params);
+		AttributeMenuWidgetController->BindCallbacksToDependecies();
+	}
+	return AttributeMenuWidgetController;
 }
 
 void AMyHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS)

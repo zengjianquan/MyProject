@@ -43,6 +43,8 @@ class MYPROJECT_API UMyWidgetController : public UObject
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWdigetControllerParams& Params);
+
+	UFUNCTION(BlueprintCallable)
 	virtual void BroadcastInitalValues();
 	virtual void BindCallbacksToDependecies();
 

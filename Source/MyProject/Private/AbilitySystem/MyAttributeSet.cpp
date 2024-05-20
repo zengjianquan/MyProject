@@ -4,14 +4,36 @@
 #include "AbilitySystem/MyAttributeSet.h"
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/Character.h"
-
 #include "GameplayEffectExtension.h"
 #include "AbilitySystemBlueprintLibrary.h"
 
+#include "MyGameplayTags.h"
+
 UMyAttributeSet::UMyAttributeSet()
 {
-	InitHealth(50.f);
-	InitMana(10.f);
+	const FMyGameplayTags& MyGameplayTags = FMyGameplayTags::Get();
+
+	/*
+	* Primary Attributes
+	*/
+	TagToAttributes.Add(MyGameplayTags.Attribute_Primary_Strength, GetStrengthAttribute());
+	TagToAttributes.Add(MyGameplayTags.Attribute_Primary_Intelligence, GetIntelligenceAttribute());
+	TagToAttributes.Add(MyGameplayTags.Attribute_Primary_Resilience, GetResilienceAttribute());
+	TagToAttributes.Add(MyGameplayTags.Attribute_Primary_Vigor, GetVigorAttribute());
+
+	/*
+	* Secondary Attributes
+	*/
+	TagToAttributes.Add(MyGameplayTags.Attribute_Secondary_Armor, GetArmorAttribute());
+	TagToAttributes.Add(MyGameplayTags.Attribute_Secondary_ArmorPenetration, GetArmorPenetrationAttribute());
+	TagToAttributes.Add(MyGameplayTags.Attribute_Secondary_CriticalHitChance, GetCriticalHitChangeAttribute());
+	TagToAttributes.Add(MyGameplayTags.Attribute_Secondary_CriticalHitDamage, GetCriticalHitDamageAttribute());
+	TagToAttributes.Add(MyGameplayTags.Attribute_Secondary_CriticalHitResistance, GetCriticalResistanceAttribute());
+	TagToAttributes.Add(MyGameplayTags.Attribute_Secondary_HealthRegeneration, GetHealthRegenerationAttribute());
+	TagToAttributes.Add(MyGameplayTags.Attribute_Secondary_ManaRegeneration, GetManaRegenerationAttribute());
+	TagToAttributes.Add(MyGameplayTags.Attribute_Secondary_BlockChance, GetBlockChanceAttribute());
+	TagToAttributes.Add(MyGameplayTags.Attribute_Secondary_MaxHealth, GetMaxHealthAttribute());
+	TagToAttributes.Add(MyGameplayTags.Attribute_Secondary_MaxMana, GetMaxManaAttribute());
 }
 
 void UMyAttributeSet::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const

@@ -9,29 +9,40 @@
 /**
  * 
  */
+class UMyOverlayWidgetController;
+class UMyAttributeMenuWidgetController;
+class UMyUserWidget;
+
 UCLASS()
 class MYPROJECT_API AMyHUD : public AHUD
 {
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY()
-	TObjectPtr<class UMyUserWidget> OverlayWidget;
+	TObjectPtr<UMyOverlayWidgetController> GetOverlayWidgetController(const struct FWdigetControllerParams& Params);
 
-	TObjectPtr<class UMyOverlayWidgetController> GetOverlayWidgetController(const struct FWdigetControllerParams& Params);
+	TObjectPtr<UMyAttributeMenuWidgetController> GetAttributeMenuWidgetController(const struct FWdigetControllerParams& Params);
 
 	void InitOverlay(APlayerController* PC, APlayerState* PS, class UAbilitySystemComponent* ASC, class UAttributeSet* AS);
 
 private:
+	UPROPERTY()
+	TObjectPtr<UMyUserWidget> OverlayWidget;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UMyUserWidget> OverlayWidgetClass;
+	TSubclassOf<UMyUserWidget> OverlayWidgetClass;
 
 	UPROPERTY()
-	TObjectPtr<class UMyOverlayWidgetController> OverlayWidgetController;
+	TObjectPtr<UMyOverlayWidgetController> OverlayWidgetController;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UMyOverlayWidgetController> OverlayWidgetControllerClass;
+	TSubclassOf<UMyOverlayWidgetController> OverlayWidgetControllerClass;
+
+	UPROPERTY()
+	TObjectPtr<UMyAttributeMenuWidgetController> AttributeMenuWidgetController;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UMyAttributeMenuWidgetController> AttributeMenuWidgetControllerClass;
 
 protected:
 	virtual void BeginPlay() override;
