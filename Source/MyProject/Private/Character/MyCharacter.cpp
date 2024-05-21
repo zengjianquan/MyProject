@@ -2,7 +2,7 @@
 
 
 #include "Character/MyCharacter.h"
-#include "AbilitySystemComponent.h"
+#include "AbilitySystem/MyAbilitySystemComponent.h"
 
 // Sets default values
 AMyCharacter::AMyCharacter()
@@ -69,4 +69,15 @@ void AMyCharacter::InitializeDefaultAttributes() const
 {
 	ApplyEffectToSelf(DefaultPrimaryAttributes, 1.0f);
 	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.0f);
+}
+
+void AMyCharacter::AddCharacterAbilities()
+{
+	UMyAbilitySystemComponent* MyASC = CastChecked<UMyAbilitySystemComponent>(AbilitySystemComponent);
+
+	//判断是否为服务端(权威端)
+	if (!HasAuthority())
+		return;
+
+	MyASC->AddCharacterAbilities(StartupAbilities);
 }

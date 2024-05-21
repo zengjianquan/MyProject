@@ -10,6 +10,8 @@
 
 #include "MyCharacter.generated.h"
 
+class UGameplayAbility;
+
 UCLASS(Abstract)
 class MYPROJECT_API AMyCharacter : public ACharacter, public IAbilitySystemInterface, public IMyCombatInterface
 {
@@ -26,6 +28,10 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TSubclassOf<class UGameplayEffect> DefaultSecondaryAttributes;
+
+private:
+	UPROPERTY(EditAnywhere, Category = "Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 
 public:
 	// Sets default values for this character's properties
@@ -57,4 +63,6 @@ protected:
 	void ApplyEffectToSelf(TSubclassOf<class UGameplayEffect> GameplayEffectClass, float Level) const;
 
 	void InitializeDefaultAttributes() const;
+
+	void AddCharacterAbilities();
 };

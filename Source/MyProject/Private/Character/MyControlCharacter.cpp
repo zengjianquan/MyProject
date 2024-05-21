@@ -36,12 +36,17 @@ void AMyControlCharacter::Tick(float DeltaTime)
 void AMyControlCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
+
+	//Init ability actor info for the Server
 	InitAbilityActorInfo();
+	AddCharacterAbilities();
 }
 
 void AMyControlCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
+
+	//Init ability actor info for the Client
 	InitAbilityActorInfo();
 }
 

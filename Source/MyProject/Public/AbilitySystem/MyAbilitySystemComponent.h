@@ -22,6 +22,8 @@ public:
 public:
 	void AbilityActorInfoSet();
 
+	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
+
 protected:
 	void EffectApply(UAbilitySystemComponent* AbilitySystemComponent, 
 		const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle);
