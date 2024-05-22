@@ -6,7 +6,7 @@
 
 void UMyAbilitySystemComponent::AbilityActorInfoSet()
 {
-	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UMyAbilitySystemComponent::EffectApply);
+	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UMyAbilitySystemComponent::ClientEffectApply);
 }
 
 void UMyAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities)
@@ -59,7 +59,7 @@ void UMyAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputTag
 	}
 }
 
-void UMyAbilitySystemComponent::EffectApply(UAbilitySystemComponent* AbilitySystemComponent,
+void UMyAbilitySystemComponent::ClientEffectApply_Implementation(UAbilitySystemComponent* AbilitySystemComponent,
 	const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)
 {
 	FGameplayTagContainer TagContainer;
