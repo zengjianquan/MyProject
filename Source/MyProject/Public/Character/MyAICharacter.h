@@ -4,13 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "Character/MyCharacter.h"
+
+#include "Interaction/MyAIInterface.h"
+
 #include "MyAICharacter.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MYPROJECT_API AMyAICharacter : public AMyCharacter
+class MYPROJECT_API AMyAICharacter : public AMyCharacter, public IMyAIInterface
 {
 	GENERATED_BODY()
 protected:

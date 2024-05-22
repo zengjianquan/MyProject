@@ -4,13 +4,19 @@
 #include "Player/MyPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "Components/SplineComponent.h"
+#include "NavigationSystem.h"
+#include "NavigationPath.h"
 
+#include "MyGameplayTags.h"
 #include "Input/MyEnhancedInputComponent.h"
 #include "AbilitySystem/MyAbilitySystemComponent.h"
 
 AMyPlayerController::AMyPlayerController()
 {
 	bReplicates = true;
+
+	Spline = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
 }
 
 void AMyPlayerController::BeginPlay()
@@ -57,8 +63,18 @@ void AMyPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 
-	//GetHitResultUnderCursor()	//调用 line trace
+	CursorTrace();
+	AutoRun();
+}
 
+void AMyPlayerController::CursorTrace()
+{	
+	LastActor = ThisActor;
+	if (!GetHitResultUnderCursor(ECC_Visibility, false, CursorHit))
+		ThisActor = nullptr;
+
+	else
+		ThisActor = Cast<IMyAIInterface>(CursorHit.GetActor());
 }
 
 void AMyPlayerController::Move(const FInputActionValue& InputActionValue)
@@ -79,20 +95,80 @@ void AMyPlayerController::Move(const FInputActionValue& InputActionValue)
 
 void AMyPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
-	if (GetMyASC() == nullptr) return;
-	GetMyASC()->AbilityInputTagPressed(InputTag);
+	if (InputTag.MatchesTagExact(FMyGameplayTags::Get().InputTag_LMB))
+	{
+		bTargeting = ThisActor ? true : false;
+		bAutoRunning = false;
+	}
 }
 
 void AMyPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
-	if (GetMyASC() == nullptr) return;
-	GetMyASC()->AbilityInputTagReleased(InputTag);
+	if (!InputTag.MatchesTagExact(FMyGameplayTags::Get().InputTag_LMB))
+	{
+		if (GetMyASC())
+			GetMyASC()->AbilityInputTagReleased(InputTag);
+
+		return;
+	}
+
+	if (bTargeting)
+	{
+		if (GetMyASC())
+			GetMyASC()->AbilityInputTagReleased(InputTag);
+	}
+	else 
+	{
+		APawn* ControlledPawn = GetPawn();
+		if (FollowTime <= ShortPressThreshold && ControlledPawn)
+		{
+			if (UNavigationPath* NavPath =
+				UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
+			{
+				Spline->ClearSplinePoints();
+
+				for (const FVector& Point : NavPath->PathPoints)
+				{
+					Spline->AddSplinePoint(Point, ESplineCoordinateSpace::World);
+					DrawDebugSphere(GetWorld(), Point, 8.f, 8, FColor::Green, false, 5.f);
+				}
+				CachedDestination = NavPath->PathPoints.Last();
+				bAutoRunning = true;
+			}
+		}
+		FollowTime = 0.f;
+		bTargeting = false;
+	}
 }
 
 void AMyPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
-	if (GetMyASC() == nullptr) return;
-	GetMyASC()->AbilityInputTagHeld(InputTag);
+	if (!InputTag.MatchesTagExact(FMyGameplayTags::Get().InputTag_LMB))
+	{
+		if (GetMyASC())
+			GetMyASC()->AbilityInputTagHeld(InputTag);
+
+		return;
+	}
+
+	if (bTargeting)
+	{
+		if (GetMyASC())
+			GetMyASC()->AbilityInputTagHeld(InputTag);
+	}
+	else
+	{
+		FollowTime += GetWorld()->GetDeltaSeconds();
+
+		if (CursorHit.bBlockingHit)
+			CachedDestination = CursorHit.ImpactPoint;
+
+		if (APawn* ControlledPawn = GetPawn())
+		{
+			const FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
+			ControlledPawn->AddMovementInput(WorldDirection);
+		}
+	}
 }
 
 UMyAbilitySystemComponent* AMyPlayerController::GetMyASC()
@@ -104,4 +180,25 @@ UMyAbilitySystemComponent* AMyPlayerController::GetMyASC()
 	}
 
 	return MyAbilitySystemComponent;
+}
+
+void AMyPlayerController::AutoRun()
+{
+	if (!bAutoRunning) return;
+
+	if (APawn* ControlledPawn = GetPawn())
+	{
+		const FVector LocationOnSpline = Spline->FindLocationClosestToWorldLocation(
+			ControlledPawn->GetActorLocation(), ESplineCoordinateSpace::World);
+		const FVector Direction = Spline->FindDirectionClosestToWorldLocation(
+			LocationOnSpline, ESplineCoordinateSpace::World);
+
+		ControlledPawn->AddMovementInput(Direction);
+
+		const float DistanceToDestination = (LocationOnSpline - CachedDestination).Length();
+		if (DistanceToDestination <= AutoRunAcceptanceRadius)
+		{
+			bAutoRunning = false;
+		}
+	}
 }

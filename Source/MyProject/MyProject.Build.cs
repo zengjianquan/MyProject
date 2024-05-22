@@ -14,6 +14,8 @@ public class MyProject : ModuleRules
 			"GameplayAbilities", 
 			"GameplayTags", 
 			"GameplayTasks",
+            "NavigationSystem",
+
             "OnlineSubsystem",
             "OnlineSubsystemNull"
         });
