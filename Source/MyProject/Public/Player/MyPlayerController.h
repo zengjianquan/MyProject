@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "GameplayTagContainer.h"
 #include "MyPlayerController.generated.h"
+
+class UMyAbilitySystemComponent;
 
 /**
  * 
@@ -21,6 +24,11 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<class UInputAction> MoveAction;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<class UMyInputConfigDataAsset> InputConfig;
+
+	TObjectPtr<UMyAbilitySystemComponent> MyAbilitySystemComponent;
+
 public:
 	AMyPlayerController();
 
@@ -34,4 +42,10 @@ public:
 
 private:
 	void Move(const struct FInputActionValue& InputActionValue);
+
+	void AbilityInputTagPressed(FGameplayTag InputTag);
+	void AbilityInputTagReleased(FGameplayTag InputTag);
+	void AbilityInputTagHeld(FGameplayTag InputTag);
+
+	UMyAbilitySystemComponent* GetMyASC();
 };

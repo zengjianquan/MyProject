@@ -2,9 +2,11 @@
 
 
 #include "Player/MyPlayerController.h"
-
 #include "EnhancedInputSubsystems.h"
-#include "EnhancedInputComponent.h"
+#include "AbilitySystemBlueprintLibrary.h"
+
+#include "Input/MyEnhancedInputComponent.h"
+#include "AbilitySystem/MyAbilitySystemComponent.h"
 
 AMyPlayerController::AMyPlayerController()
 {
@@ -42,9 +44,13 @@ void AMyPlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	//
-	UEnhancedInputComponent* EnhanceInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+	UMyEnhancedInputComponent* MyEnhanceInputComponent = CastChecked<UMyEnhancedInputComponent>(InputComponent);
+	MyEnhanceInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMyPlayerController::Move);
 
-	EnhanceInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMyPlayerController::Move);
+	MyEnhanceInputComponent->BindAbilityActions(InputConfig, this, 
+		&AMyPlayerController::AbilityInputTagPressed, 
+		&AMyPlayerController::AbilityInputTagReleased, 
+		&AMyPlayerController::AbilityInputTagHeld);
 }
 
 void AMyPlayerController::PlayerTick(float DeltaTime)
@@ -69,4 +75,33 @@ void AMyPlayerController::Move(const FInputActionValue& InputActionValue)
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
 	}
 
+}
+
+void AMyPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
+{
+	if (GetMyASC() == nullptr) return;
+	GetMyASC()->AbilityInputTagPressed(InputTag);
+}
+
+void AMyPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	if (GetMyASC() == nullptr) return;
+	GetMyASC()->AbilityInputTagReleased(InputTag);
+}
+
+void AMyPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
+{
+	if (GetMyASC() == nullptr) return;
+	GetMyASC()->AbilityInputTagHeld(InputTag);
+}
+
+UMyAbilitySystemComponent* AMyPlayerController::GetMyASC()
+{
+	if (MyAbilitySystemComponent == nullptr)
+	{
+		MyAbilitySystemComponent = Cast<UMyAbilitySystemComponent>(
+			UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn()));
+	}
+
+	return MyAbilitySystemComponent;
 }
