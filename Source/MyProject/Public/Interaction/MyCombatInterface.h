@@ -24,4 +24,5 @@ class MYPROJECT_API IMyCombatInterface
 public:
 	virtual int32 GetPlayerLevel();
 
+	virtual FVector GetCombatSocketLocation();
 };

@@ -20,6 +20,12 @@ protected:
 	UPROPERTY()
 	TObjectPtr<class UAbilitySystemComponent> AbilitySystemComponent;
 
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TObjectPtr<USkeletalMeshComponent> Weapon;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	FName WeaponTipSocketName;
+
 	UPROPERTY()
 	TObjectPtr<class UAttributeSet> AttributeSet;
 
@@ -55,6 +61,8 @@ public:
 
 	// begin IMyCombatInterface
 	virtual int32 GetPlayerLevel() override;
+
+	virtual FVector GetCombatSocketLocation() override;
 	// end IMyCombatInterface
 
 protected:

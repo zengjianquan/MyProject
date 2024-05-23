@@ -8,7 +8,7 @@
 void UMyOverlayWidgetController::BroadcastInitalValues()
 {
 	UMyAttributeSet* MyAttributeSet = CastChecked<UMyAttributeSet>(AttributeSet);
-
+	
 	OnHealthChanged.Broadcast(MyAttributeSet->GetHealth());
 	OnMaxHealthChanged.Broadcast(MyAttributeSet->GetMaxHealth());
 	OnManaChanged.Broadcast(MyAttributeSet->GetMana());

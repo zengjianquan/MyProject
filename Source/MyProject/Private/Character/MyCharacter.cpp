@@ -9,6 +9,10 @@ AMyCharacter::AMyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon"));
+	Weapon->SetupAttachment(GetMesh(), FName("WeaponHandSocket"));
+	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 // Called when the game starts or when spawned
@@ -45,6 +49,14 @@ UAttributeSet* AMyCharacter::GetAttributeSet() const
 int32 AMyCharacter::GetPlayerLevel()
 {
 	return int32();
+}
+
+FVector AMyCharacter::GetCombatSocketLocation()
+{
+	if(Weapon->GetSkeletalMeshAsset())
+		return Weapon->GetSocketLocation(WeaponTipSocketName);
+
+	return GetMesh()->GetSocketLocation(WeaponTipSocketName);
 }
 
 void AMyCharacter::InitAbilityActorInfo()
