@@ -3,6 +3,7 @@
 
 #include "MyAssetManager.h"
 #include "MyGameplayTags.h"
+#include "AbilitySystemGlobals.h"
 
 UMyAssetManager& UMyAssetManager::Get()
 {
@@ -15,4 +16,7 @@ void UMyAssetManager::StartInitialLoading()
 	Super::StartInitialLoading();
 
 	FMyGameplayTags::InitalizeNativeGameplayTags();
+
+	//使用 Target 的必要条件
+	UAbilitySystemGlobals::Get().InitGlobalData();
 }

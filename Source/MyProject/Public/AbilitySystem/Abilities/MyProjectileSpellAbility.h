@@ -23,6 +23,9 @@ protected:
 		const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	//~ End UGameplayAbility Interface
 
+	UFUNCTION(BlueprintCallable, Category = "Projectile")
+	void SpawnProjectile();
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AMyProjectileActor> ProjectileClass;

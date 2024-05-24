@@ -9,8 +9,12 @@ void UMyProjectileSpellAbility::ActivateAbility(const FGameplayAbilitySpecHandle
 	const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+}
 
-	const bool bIsServer = HasAuthority(&ActivationInfo);
+void UMyProjectileSpellAbility::SpawnProjectile()
+{
+
+	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 
 	if (!bIsServer)
 		return;
@@ -24,9 +28,9 @@ void UMyProjectileSpellAbility::ActivateAbility(const FGameplayAbilitySpecHandle
 		SpawnTransform.SetLocation(SocketLocation);
 
 		AMyProjectileActor* Projectile = GetWorld()->SpawnActorDeferred<AMyProjectileActor>(
-			ProjectileClass, 
+			ProjectileClass,
 			SpawnTransform,
-			GetOwningActorFromActorInfo(), 
+			GetOwningActorFromActorInfo(),
 			Cast<APawn>(GetOwningActorFromActorInfo()),
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
