@@ -25,13 +25,14 @@ void UMyTargetDataAbilityTask::Activate()
 			SpecHandle, ActivationPredicationKey).AddLambda(
 				[this](const FGameplayAbilityTargetDataHandle& DataHandle, FGameplayTag ActivationTag)
 				{
-					AbilitySystemComponent->ConsumeClientReplicatedTargetData(
-						GetAbilitySpecHandle(), GetActivationPredictionKey());
-
 					if (ShouldBroadcastAbilityTaskDelegates())
 					{
 						ValidData.Broadcast(DataHandle);
 					}
+
+					AbilitySystemComponent->ConsumeClientReplicatedTargetData(
+						GetAbilitySpecHandle(), GetActivationPredictionKey());
+
 				});
 
 		const bool bCalledDelegate =
