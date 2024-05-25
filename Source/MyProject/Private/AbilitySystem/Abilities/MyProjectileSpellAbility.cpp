@@ -11,7 +11,7 @@ void UMyProjectileSpellAbility::ActivateAbility(const FGameplayAbilitySpecHandle
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UMyProjectileSpellAbility::SpawnProjectile()
+void UMyProjectileSpellAbility::SpawnProjectile(const FVector& ProjectileTargetLocation)
 {
 
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
@@ -23,9 +23,12 @@ void UMyProjectileSpellAbility::SpawnProjectile()
 	if (CombatInterface)
 	{
 		const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
+		FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
+		Rotation.Pitch = 0.f;
 
 		FTransform SpawnTransform;
 		SpawnTransform.SetLocation(SocketLocation);
+		SpawnTransform.SetRotation(Rotation.Quaternion());
 
 		AMyProjectileActor* Projectile = GetWorld()->SpawnActorDeferred<AMyProjectileActor>(
 			ProjectileClass,
