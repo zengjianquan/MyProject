@@ -5,6 +5,9 @@
 #include "Actor/MyProjectileActor.h"
 #include "Interaction/MyCombatInterface.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
+
 void UMyProjectileSpellAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, 
 	const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
@@ -38,6 +41,14 @@ void UMyProjectileSpellAbility::SpawnProjectile(const FVector& ProjectileTargetL
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
 
+		UAbilitySystemComponent* ASC =
+			UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
+
+		FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
+		ContextHandle.AddSourceObject(Projectile);
+
+		Projectile->DamageEffectSpecHandle = ASC->MakeOutgoingSpec(
+			DamageEffectClass, GetAbilityLevel(), ContextHandle);
 
 		Projectile->FinishSpawning(SpawnTransform);
 	}

@@ -2,6 +2,7 @@
 
 
 #include "Character/MyCharacter.h"
+#include "Components/CapsuleComponent.h"
 #include "AbilitySystem/MyAbilitySystemComponent.h"
 
 // Sets default values
@@ -9,6 +10,8 @@ AMyCharacter::AMyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
 
 	GetMesh()->SetCollisionResponseToAllChannels(ECR_Block);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel1, ECR_Overlap);
@@ -85,6 +88,7 @@ void AMyCharacter::InitializeDefaultAttributes() const
 {
 	ApplyEffectToSelf(DefaultPrimaryAttributes, 1.0f);
 	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.0f);
+	ApplyEffectToSelf(DefaultVitalAttributes, 1.0f);
 }
 
 void AMyCharacter::AddCharacterAbilities()

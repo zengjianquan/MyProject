@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 
 // Sets default values
 AMyProjectileActor::AMyProjectileActor()
@@ -61,8 +62,9 @@ void AMyProjectileActor::OnSphereOverlap(UPrimitiveComponent* OverlappedComponen
 	AActor* OtherActor, UPrimitiveComponent* OtherComp, 
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner()) == 
-		UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
+	if (TargetASC &&
+		UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner()) == TargetASC)
 		return;
 
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
@@ -71,6 +73,11 @@ void AMyProjectileActor::OnSphereOverlap(UPrimitiveComponent* OverlappedComponen
 
 	if (HasAuthority())
 	{
+		if (TargetASC) 
+		{
+			TargetASC->ApplyGameplayEffectSpecToSelf((*DamageEffectSpecHandle.Data.Get()));
+		}
+
 		Destroy();
 	}
 	else //避免服务端先 Destroy, 客户端没有进行 Overlap, 导致没有 Impact 效果
