@@ -7,6 +7,7 @@
 #include "Components/AudioComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
+#include "AbilitySystemBlueprintLibrary.h"
 
 // Sets default values
 AMyProjectileActor::AMyProjectileActor()
@@ -60,6 +61,10 @@ void AMyProjectileActor::OnSphereOverlap(UPrimitiveComponent* OverlappedComponen
 	AActor* OtherActor, UPrimitiveComponent* OtherComp, 
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner()) == 
+		UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+		return;
+
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 	//LoopingSoundComponent->Stop();
