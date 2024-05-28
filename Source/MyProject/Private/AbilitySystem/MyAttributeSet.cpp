@@ -93,7 +93,7 @@ void UMyAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 	}
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
-		SetHealth(FMath::Clamp(GetMana(), 0, GetMana()));
+		SetMana(FMath::Clamp(GetMana(), 0, GetMana()));
 	}
 }
 

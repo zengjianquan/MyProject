@@ -6,8 +6,10 @@
 #include "Character/MyCharacter.h"
 
 #include "Interaction/MyAIInterface.h"
-
+#include "UI/WidgetController/MyOverlayWidgetController.h"
 #include "MyAICharacter.generated.h"
+
+class UWidgetComponent;
 
 /**
  * 
@@ -39,4 +41,15 @@ public:
 private:
 	virtual void InitAbilityActorInfo() override;
 
+
+public:
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSignature OnHealthChange;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSignature OnMaxHealthChange;
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UWidgetComponent> HealthBar;
 };

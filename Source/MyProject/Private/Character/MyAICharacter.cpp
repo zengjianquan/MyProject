@@ -5,6 +5,8 @@
 #include "AbilitySystem/MyAbilitySystemComponent.h"
 #include "AbilitySystem/MyAttributeSet.h"
 
+#include "Components/WidgetComponent.h"
+
 AMyAICharacter::AMyAICharacter()
 {
 	AbilitySystemComponent = CreateDefaultSubobject<UMyAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
@@ -12,12 +14,42 @@ AMyAICharacter::AMyAICharacter()
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 
 	AttributeSet = CreateDefaultSubobject<UMyAttributeSet>(TEXT("AttributeSet"));
+
+	HealthBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBar"));
+	HealthBar->SetupAttachment(GetRootComponent());
 }
 
 void AMyAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	InitAbilityActorInfo();
+
+	if (UMyUserWidget* MyUserWidget = Cast<UMyUserWidget>(HealthBar->GetUserWidgetObject()))
+	{
+		MyUserWidget->SetWidgetController(this);
+	}
+
+	if (const UMyAttributeSet* AS = Cast<UMyAttributeSet>(AttributeSet))
+	{
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+			AS->GetHealthAttribute()).AddLambda(
+				[this](const FOnAttributeChangeData& Data)
+				{
+					this->OnHealthChange.Broadcast(Data.NewValue);
+				}
+		);
+
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+			AS->GetMaxHealthAttribute()).AddLambda(
+				[this](const FOnAttributeChangeData& Data)
+				{
+					this->OnMaxHealthChange.Broadcast(Data.NewValue);
+				}
+		);
+
+		OnHealthChange.Broadcast(AS->GetHealth());
+		OnMaxHealthChange.Broadcast(AS->GetMaxHealth());
+	}
 }
 
 void AMyAICharacter::Tick(float DeltaTime)
